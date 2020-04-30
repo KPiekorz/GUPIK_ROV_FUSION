@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "usart.h"
 
 
 /* Define enumeration type to identyfy the source of the data */
@@ -38,8 +39,6 @@ typedef struct{
 
 }eth_send_queue_data_t;
 
-/* Queue variable */
-QueueHandle_t eth_send_data_Queue;
 
 /**************************************/
 /* function to create frtos api tasks */
