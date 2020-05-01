@@ -87,7 +87,10 @@ void vTaskMotorControl(void * argument){
 		xQueueSendToBack(send_eth_data_queue, &motor_data_packet, 0);
 		*/
 
-		// kolejka do oczekiwania na komende
+		// kolejka do oczekiwania na komende, ktora jest w standardowej formie struktury pakietowej
+
+
+		// przerobienie struktury na normalna forma komendy
 
 
 		// wywolanie funkcja z biblioteki do sterowania silnikami
