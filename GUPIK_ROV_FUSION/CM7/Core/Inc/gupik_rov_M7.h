@@ -20,15 +20,16 @@
 #include "usart.h"
 
 // eth communication include
-#include "eth_comm.h"
+#include "eth_comm.h" // my include eth file
+
 
 
 /**************************************/
-/* function to create frtos api tasks */
+/* function to create frtos api tasks on M7 */
 void create_gupik_rov_M7_frtos_api_init();
 /**************************************/
 
-/* gupik rov frtos api tasks */
+/* gupik rov frtos api tasks on M7 */
 
 // task to eth communication
 void vTaskEthReceiveCommand(void * argument); // task to control eth connection, receive command
