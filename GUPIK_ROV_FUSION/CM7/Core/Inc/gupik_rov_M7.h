@@ -8,36 +8,19 @@
 #ifndef INC_GUPIK_ROV_M7_H_
 #define INC_GUPIK_ROV_M7_H_
 
+// frtos include
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
 
+// standard library include
 #include <stdio.h>
 #include <string.h>
 #include "usart.h"
 
-
-/* Define enumeration type to identyfy the source of the data */
-typedef enum{
-
-	imu_sensor_data,
-	motor_speed_data
-
-}Data_Source_t;
-
-/* Define the structure type that will be passed on the eth queue */
-typedef struct{
-
-	Data_Source_t data_source;
-
-	/* imu and pressure sensor value */
-
-
-	/* motor speed value */ // TODO: raczej jakies struktury przechowujace te dane
-	uint8_t jakas_przykladowa_wartosc;
-
-}eth_send_queue_data_t;
+// eth communication include
+#include "eth_comm.h"
 
 
 /**************************************/
@@ -46,7 +29,12 @@ void create_gupik_rov_M7_frtos_api_init();
 /**************************************/
 
 /* gupik rov frtos api tasks */
-void vTaskEthSendData(void * argument);
+
+// task to eth communication
+void vTaskEthReceiveCommand(void * argument); // task to control eth connection, receive command
+void vTaskEthSendData(void * argument); // task to send eth data (motor speed, imu value, press etc.)
+
+// task to motor control
 void vTaskMotorControl(void * argument);
 
 

@@ -14,6 +14,9 @@ extern char uart3_msg[300];
 /* Queue variable */
 QueueHandle_t send_eth_data_queue;
 
+QueueHandle_t motor_command_queue;
+
+QueueHandle_t intercore_command_queue;
 
 /**********************************************/
 
@@ -21,7 +24,7 @@ QueueHandle_t send_eth_data_queue;
 void create_gupik_rov_M7_frtos_api_init(){
 
 	/* create queue to transmit data to ethernet send task */
-	send_eth_data_queue = xQueueCreate( 5, sizeof(eth_send_queue_data_t));
+	send_eth_data_queue = xQueueCreate( 5, sizeof(Eth_Packet));
 
 
 	// create eth send data task
@@ -36,31 +39,31 @@ void create_gupik_rov_M7_frtos_api_init(){
 
 /* gupik rov frtos api tasks implementation */
 
-void vTaskEthSendData(void * argument){
+void vTaskEthReceiveCommand(void * argument){
 
-	eth_send_queue_data_t eth_send_data;
 
 	for(;;){
 
-		xQueueReceive(send_eth_data_queue, &eth_send_data, portMAX_DELAY);
+
+
+	}
+	vTaskDelete(NULL);
+}
+
+void vTaskEthSendData(void * argument){
+
+	Eth_Packet eth_send_data_packet;
+
+	for(;;){
+
+		// wait for data receive from eth data queue which receive only Eth_packet struct data to send
+		xQueueReceive(send_eth_data_queue, &eth_send_data_packet, portMAX_DELAY);
 
 		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
 
-		switch (eth_send_data.data_source) {
+		sprintf(uart3_msg, "Speed data: %d\n\r", eth_send_data_packet.data[0]);
+		HAL_UART_Transmit(&huart3,(uint8_t*) uart3_msg, strlen(uart3_msg), HAL_MAX_DELAY);
 
-			case imu_sensor_data:
-
-
-
-				break;
-
-			case motor_speed_data:
-
-				sprintf(uart3_msg, "motor data to send\n\r");
-				HAL_UART_Transmit(&huart3, (uint8_t*) uart3_msg, strlen(uart3_msg), HAL_MAX_DELAY);
-
-				break;
-		}
 
 	}
 	vTaskDelete(NULL);
@@ -70,14 +73,25 @@ void vTaskEthSendData(void * argument){
 
 void vTaskMotorControl(void * argument){
 
-	eth_send_queue_data_t motor_data = {motor_speed_data, 12};
+	Eth_Packet motor_data_packet;
+
 
 	for(;;){
 
 		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 		vTaskDelay(pdMS_TO_TICKS(2000));
 
-		xQueueSendToBack(send_eth_data_queue, &motor_data, 0);
+		/*
+		motor_data_packet.data[0] = 123;
+
+		xQueueSendToBack(send_eth_data_queue, &motor_data_packet, 0);
+		*/
+
+		// kolejka do oczekiwania na komende
+
+
+		// wywolanie funkcja z biblioteki do sterowania silnikami
+
 
 
 	}
