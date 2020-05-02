@@ -37,9 +37,9 @@ enum{
 /* struct to hold packet variables */
 typedef struct{
 
-	uint8_t packet_type;
-	uint8_t data_length;
-	uint8_t data[30];
+	uint8_t packet_type; // command number or data number
+	uint8_t data_length; // command or data parameter ammount
+	uint8_t data[30]; //if commamd -> parameter value , data -> data value
 	uint16_t checksum;
 
 }Eth_Packet;

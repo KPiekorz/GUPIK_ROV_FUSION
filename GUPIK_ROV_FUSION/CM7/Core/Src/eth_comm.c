@@ -94,8 +94,8 @@ void convert_eth_packet_to_tcp_array(char * eth_packet_data, uint16_t * eth_data
 
 	*(eth_packet_data+index) = '\0';
 
-	sprintf(uart3_send, "Calc_checksum: %d \n\r", checksum);
-	HAL_UART_Transmit(&huart3, (uint8_t*) uart3_send, strlen(uart3_send), HAL_MAX_DELAY);
+//	sprintf(uart3_send, "Calc_checksum: %d \n\r", checksum);
+//	HAL_UART_Transmit(&huart3, (uint8_t*) uart3_send, strlen(uart3_send), HAL_MAX_DELAY);
 
 }
 

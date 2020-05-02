@@ -65,6 +65,56 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+/**
+  * @brief  Configure the MPU attributes for eth buffer
+  * @param  None
+  * @retval None
+  */
+static void MPU_ETH_Config(void)
+{
+
+	MPU_Region_InitTypeDef MPU_InitStruct;
+
+	/* Disable the MPU */
+	HAL_MPU_Disable();
+
+	/* Configure the MPU attributes as Device not cacheable
+	 for ETH DMA descriptors */
+	MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+	MPU_InitStruct.BaseAddress = 0x30040000;
+	MPU_InitStruct.Size = MPU_REGION_SIZE_256B;
+	MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+	MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
+	MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+	MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+	MPU_InitStruct.Number = MPU_REGION_NUMBER0;
+	MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
+	MPU_InitStruct.SubRegionDisable = 0x00;
+	MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+
+	HAL_MPU_ConfigRegion(&MPU_InitStruct);
+
+	/* Configure the MPU attributes as Normal Non Cacheable
+	 for LwIP RAM heap which contains the Tx buffers */
+	MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+	MPU_InitStruct.BaseAddress = 0x30044000;
+	MPU_InitStruct.Size = MPU_REGION_SIZE_16KB;
+	MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+	MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+	MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+	MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
+	MPU_InitStruct.Number = MPU_REGION_NUMBER1;
+	MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1;
+	MPU_InitStruct.SubRegionDisable = 0x00;
+	MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+
+	HAL_MPU_ConfigRegion(&MPU_InitStruct);
+
+	/* Enable the MPU */
+	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -74,6 +124,8 @@ void MX_FREERTOS_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+  MPU_ETH_Config();
 
   /* USER CODE END 1 */
   /* USER CODE BEGIN Boot_Mode_Sequence_0 */
@@ -133,6 +185,9 @@ Error_Handler();
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
+
+  /* init code for LWIP */
+  MX_LWIP_Init();
 
   /* USER CODE END 2 */
 

@@ -21,7 +21,10 @@
 
 // eth communication include
 #include "eth_comm.h" // my include eth file
-
+#include "lwip.h"
+#include "lwip/opt.h"
+#include "lwip/arch.h"
+#include "lwip/api.h"
 
 
 /**************************************/
